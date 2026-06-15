@@ -1,10 +1,12 @@
 class ListsController < ApplicationController
+  before_action :set_list, only: [:show, :destroy]
+
   def index
     @lists = List.all
   end
 
   def show
-    @list = List.find(params[:id])
+    @bookmark = Bookmark.new #comme le simple form est sur la show de list et qu'on a besoin d'une instance de bookmark dans le form
   end
 
   def new
@@ -20,9 +22,18 @@ class ListsController < ApplicationController
     end
   end
 
+  def destroy
+    @list.destroy
+    redirect_to lists_path, status: :see_other
+  end
+
   private
 
-  def lists_params
+  def set_list
+    @list = List.find(params[:id])
+  end
+
+  def list_params
     params.require(:list).permit(:name)
   end
 end

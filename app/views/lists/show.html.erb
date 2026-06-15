@@ -1,16 +1,27 @@
-<div class="container">
-
-  <h1>
-    <%= @list.name %>
-  </h1>
+<div class="container mt-5">
+  <h1><%= @list.name %></h1>
 
   <ul>
     <% @list.bookmarks.each do |bookmark| %>
-      <li>
-        <%= bookmark.movie.title %>
+      <li> <%= bookmark.movie.title %>, <small><%= bookmark.comment %></small>
+      <%= link_to "delete", bookmark_path(bookmark), data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to remove #{bookmark.movie.title} from your #{@list.name} list"}, class: 'text-danger' %></small>
       </li>
+
     <% end %>
   </ul>
 
 
+  <h3>Add a movie</h3>
+
+  <%= simple_form_for [@list, @bookmark] do |f| %>
+    <div class="modal-body">
+      <%= f.association :movie, collection: Movie.all.order(:title), prompt: "Select a movie", input_html: { data: { controller: "tom-select" } } %>
+      <%= f.input :comment, placeholder: "Enter a comment about the movie" %>
+    </div>
+    <div class="modal-footer">
+      <%= f.submit "Add movie", class: "btn btn-flat" %>
+    </div>
+  <% end %>
+
+  <%= link_to "Back to lists", lists_path, class: "btn btn-primary" %>
 </div>
